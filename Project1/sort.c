@@ -27,11 +27,11 @@ void remove_stack(void) {
 	free(stack);
 }
 
-void select_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void select_sort(void* base, int nelem, int width, FCMP fcmp) {
 	/* 최소값을 찾는 선택 정렬 알고리즘 */
 	void* min;
-	size_t minindex;
-	size_t i, j;
+	int minindex;
+	int i, j;
 
 	if ((min = malloc(width)) == NULL) exit(1);
 	for (i = 0; i < nelem - 1; i++) {
@@ -48,9 +48,9 @@ void select_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
 	}
 	free(min);
 }
-void insert_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void insert_sort(void* base, int nelem, int width, FCMP fcmp) {
 	/* 삽입 정렬 알고리즘 */
-	size_t i, j;
+	int i, j;
 	void* t;
 	if ((t = malloc(width)) == NULL) exit(1);
 	for (i = 1; i < nelem; i++) {
@@ -64,9 +64,9 @@ void insert_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
 	}
 	free(t);
 }
-void bubble_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void bubble_sort(void* base, int nelem, int width, FCMP fcmp) {
 	/* 보초가 있는 거품 정렬 */
-	size_t i, j;
+	int i, j;
 	int s;
 	void* t;
 	if ((t = malloc(width)) == NULL) exit(1);
@@ -84,9 +84,9 @@ void bubble_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
 	}
 	free(t);
 }
-void shell_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void shell_sort(void* base, int nelem, int width, FCMP fcmp) {
 	/* h = 3*h+1 을 이용한 쉘 정렬 */
-	size_t i, j, k, h;
+	int i, j, k, h;
 	void* v;
 	if ((v = malloc(width)) == NULL) exit(1);
 	for (h = 1; h < nelem; h = 3 * h + 1);
@@ -106,11 +106,11 @@ void shell_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
 	free(v);
 }
 
-void quick_sort1(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void quick_sort1(void* base, int nelem, int width, FCMP fcmp) {
 	/* 세 값의 증위를 이용하는 퀵 정렬 */
 	void* v, * u;
-	size_t i, j, t;
-	size_t l, r;
+	int i, j, t;
+	int l, r;
 	init_stack();
 	v = malloc(width);
 	u = malloc(width);
@@ -167,12 +167,12 @@ void quick_sort1(void* base, size_t nelem, size_t width, FCMP fcmp) {
 	free(u);
 	free(v);
 }
-void quick_sort2(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void quick_sort2(void* base, int nelem, int width, FCMP fcmp) {
 	/* 난수 분할을 이용하는 퀵 정렬 */
 	srand((unsigned int)time(NULL));
 	void* v, * u;
-	size_t i, j, t;
-	size_t l, r;
+	int i, j, t;
+	int l, r;
 	init_stack();
 	v = malloc(width);
 	u = malloc(width);
@@ -200,8 +200,8 @@ void quick_sort2(void* base, size_t nelem, size_t width, FCMP fcmp) {
 				memcpy(BASE(j), u, width);
 			}
 			memcpy(u, BASE(i), width);
-			memcpy(BASE(i), BASE(r - 1), width);
-			memcpy(BASE(r - 1), u, width);
+			memcpy(BASE(i), BASE(r), width);
+			memcpy(BASE(r), u, width);
 			push(r);
 			push(i + 1);
 			push(i - 1);
@@ -214,26 +214,26 @@ void quick_sort2(void* base, size_t nelem, size_t width, FCMP fcmp) {
 	free(u);
 	free(v);
 }
-void merge_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void merge_sort(void* base, int nelem, int width, FCMP fcmp) {
 	/* 상향식 병합정렬 */
-	size_t i, j, k, first, second, size;
+	int i, j, k, first, second, size;
 	void* b;
 	if ((b = malloc(width * nelem)) == NULL) {
 		printf("\nOut of memory error!");
 		return;
 	}
-	for (size = 1; size < nelem; size <<= 1) {
+	for (size = 1; size < nelem; size = size * 2) {
 		first = -2 * size;
 		second = first + size;
-		while (second + size < nelem) {
+		while (second + size*2 < nelem) {
 			first = second + size;
 			second = first + size;
 			i = first;
 			j = second;
 			k = first;
-			while (i < first + size || (j < second + size && j < nelem)) {
+			while ((i < first + size) || ((j < second + size) && (j < nelem))) {
 				if (fcmp(BASE(i), BASE(j)) <= 0) {
-					if (i < first + size) {
+					if (i < (first + size)) {
 						memcpy((char*)b + (k++) * width, BASE(i++), width);
 					}
 					else {
@@ -241,7 +241,7 @@ void merge_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
 					}
 				}
 				else {
-					if (j < second + size && j < nelem) {
+					if ((j < second + size) && (j < nelem)) {
 						memcpy((char*)b + (k++) * width, BASE(j++), width);
 					}
 					else {
@@ -255,9 +255,9 @@ void merge_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
 	free(b);
 }
 
-void downheap(void* base, size_t nelem, size_t width, FCMP fcmp, size_t k) {
+void downheap(void* base, int nelem, int width, FCMP fcmp, int k) {
 	/* 힙 정렬을 위한 DOWNHEAP 함수 */
-	size_t i;
+	int i;
 	void* v;
 	if ((v = malloc(width)) == NULL) exit(1);
 	memcpy(v, BASE(k - 1), width);
@@ -271,9 +271,9 @@ void downheap(void* base, size_t nelem, size_t width, FCMP fcmp, size_t k) {
 	memcpy(BASE(k - 1), v, width);
 	free(v);
 }
-void heap_sort(void* base, size_t nelem, size_t width, FCMP fcmp) {
+void heap_sort(void* base, int nelem, int width, FCMP fcmp) {
 	/* 상향식 힙 생성을 이용한 힙 정렬 */
-	size_t k;
+	int k;
 	void* t;
 	if ((t = malloc(width)) == NULL) exit(1);
 	for (k = nelem / 2; k >= 1; k--) {
@@ -295,10 +295,10 @@ struct entry {
 	int is_eof;
 };
 
-void external_sort(FILE* src, FILE* dst, size_t width, void* buf, size_t buflen, FCMP fcmp) {
+void external_sort(FILE* src, FILE* dst, int width, void* buf, int buflen, FCMP fcmp) {
 	/* 내부정렬은 쉘, 외부 파일은 병합 */
-	size_t i, minindex, done;
-	size_t nelem, nbuf, nfile;
+	int i, minindex, done;
+	int nelem, nbuf, nfile;
 	void* min;
 	struct entry* tmp;
 

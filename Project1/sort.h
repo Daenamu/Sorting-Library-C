@@ -14,20 +14,20 @@ typedef int (*FCMP)(const void*, const void*);
 int make_stack(void);
 void remove_stack(void);
 
-void select_sort(void* base, size_t nelem, size_t width, FCMP fcmp);
-void insert_sort(void* base, size_t nelem, size_t width, FCMP fcmp);
-void bubble_sort(void* base, size_t nelem, size_t width, FCMP fcmp);
+void select_sort(void* base, int nelem, int width, FCMP fcmp);
+void insert_sort(void* base, int nelem, int width, FCMP fcmp);
+void bubble_sort(void* base, int nelem, int width, FCMP fcmp);
 
-void shell_sort(void* base, size_t nelem, size_t width, FCMP fcmp);
+void shell_sort(void* base, int nelem, int width, FCMP fcmp);
 
-void quick_sort1(void* base, size_t nelem, size_t width, FCMP fcmp);
-void quick_sort2(void* base, size_t nelem, size_t width, FCMP fcmp);
+void quick_sort1(void* base, int nelem, int width, FCMP fcmp);
+void quick_sort2(void* base, int nelem, int width, FCMP fcmp);
 
-void merge_sort(void* base, size_t nelem, size_t width, FCMP fcmp);
+void merge_sort(void* base, int nelem, int width, FCMP fcmp);
 
-void downheap(void* base, size_t nelem, size_t width, FCMP fcmp, size_t k);
-void heap_sort(void* base, size_t nelem, size_t width, FCMP fcmp);
+void downheap(void* base, int nelem, int width, FCMP fcmp, int k);
+void heap_sort(void* base, int nelem, int width, FCMP fcmp);
 
-void external_sort(FILE *src, FILE *dst, size_t width, void* buf, size_t buflen, FCMP fcmp);
+void external_sort(FILE *src, FILE *dst, int width, void* buf, int buflen, FCMP fcmp);
 
 #endif

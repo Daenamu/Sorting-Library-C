@@ -15,14 +15,14 @@
 #define HALFSO 2
 #define REVERS 3
 
-typedef void (*SORTFNC)(void*, size_t, size_t, FCMP);
-typedef void (*ESFNC)(FILE*, FILE*, size_t, void*, size_t, FCMP);
+typedef void (*SORTFNC)(void*, int, int, FCMP);
+typedef void (*ESFNC)(FILE*, FILE*, int, void*, int, FCMP);
 
 int intcmp(const void* a, const void* b) {
 	return (*(int*)a - *(int*)b);
 }
 
-void set_array(int* a, size_t n, int m) {
+void set_array(int* a, int n, int m) {
 	char* fname[] = { "ASCEND.DAT", "RANDOM.DAT", "HALFSORT.DAT", "DESCEND.DAT" };
 	FILE* fp;
 
@@ -34,8 +34,8 @@ void set_array(int* a, size_t n, int m) {
 	fclose(fp);
 }
 
-int is_sorted(int* a, size_t n) {
-	size_t i;
+int is_sorted(int* a, int n) {
+	int i;
 	for (i = 0; i < n - 1; i++) {
 		if (a[i] > a[i + 1]) {
 			return 0;
@@ -44,7 +44,7 @@ int is_sorted(int* a, size_t n) {
 	return 1;
 }
 
-float sort_testnm(size_t n, int m, SORTFNC sort_func) {
+float sort_testnm(int n, int m, SORTFNC sort_func) {
 	clock_t t1, t2;
 	float t;
 	int* a;
@@ -59,23 +59,15 @@ float sort_testnm(size_t n, int m, SORTFNC sort_func) {
 	t2 = clock();
 	t = (float)(t2 - t1);
 
-	/*
-	printf("\n");
-	for (size_t i = 0; i < n; i++) {
-		printf("%d ", a[i]);
-	}
-	printf("\n");
-	*/
-
 	if (!is_sorted(a, n)) t = -1;
 	free(a);
 	return t;
 }
 
-void sort_testn(size_t n, SORTFNC sort_func) {
-	double t;
+void sort_testn(int n, SORTFNC sort_func) {
+	float t;
 	int i;
-	printf("\n    %6ld", n);
+	printf("\n    %6d", n);
 	for (i = SORTED; i <= REVERS; i++) {
 		t = sort_testnm(n, i, sort_func);
 		printf("  %10.3f", t);
@@ -83,16 +75,14 @@ void sort_testn(size_t n, SORTFNC sort_func) {
 }
 
 void sort_test(char* name, SORTFNC sort_func) {
-	size_t n[] = { 10, 100, 500, 1000, 2000, 5000, 7000, 10000, 0 };
+	int n[] = { 10, 100, 500, 1000, 2000, 5000, 7000, 10000, -1};
 	int i = 0;
 	printf("\n*** %s"
 		"\n     N       Sorted      Random     Half-sorted   Reversed"
 		"\n     ------  ---------   ---------  ------------  ----------"
 		, name);
-
-	// sort_testn(n[0], sort_func);
 	
-	while (n[i] > 0) {
+	while (n[i] > -1) {
 		sort_testn(n[i++], sort_func);
 	}
 	printf("\n");
@@ -179,7 +169,7 @@ void external_sort_text(ESFNC sort_func) {
 		sort_func(src, dst, sizeof(int), buf, BUFSIZE, intcmp);
 		t2 = clock();
 		t = (float)(t2-t1);
-		printf("  %10f", t);
+		printf("  %10.3f", t);
 		fclose(src);
 		fclose(dst);
 	}
@@ -193,9 +183,8 @@ int main() {
 	sort_test("Insertion Sort", insert_sort);
 	sort_test("Bubble Sort", bubble_sort);
 	sort_test("Shell Sort", shell_sort);
-	sort_test("Quick Sort1 : using median", quick_sort1);
+	sort_test("Quick Sort1 : using median", quick_sort1); 
 	sort_test("Quick Sort2 : using random", quick_sort2);
-	sort_test("Quick Sort : using qsort()", qsort);
 	sort_test("Merge Sort", merge_sort);
 	sort_test("Heap Sort", heap_sort);
 	external_sort_text(external_sort);
